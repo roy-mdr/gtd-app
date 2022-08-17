@@ -2,8 +2,8 @@
     import Sortable from 'sortablejs';
     import { onMount } from "svelte";
 
+    import InboxInput from './InboxInput.svelte';
     import IdeaItem from "./IdeaItem.svelte";
-    import TextAreaAutosize from './TextAreaAutosize.svelte';
 
     onMount(async () => {
         setUpSortable();
@@ -11,7 +11,6 @@
 
     let inboxEl;
 
-    let newItem = "";
     let myList = [];
 
     function setUpSortable() {
@@ -36,18 +35,9 @@
         myList = myList;
     }
 
-    function addItem(ev) {
-
-        if (newItem == "") return;
-
-        const newListItem = {
-            id: Math.random(),
-            text: newItem,
-        }
-
-        myList.unshift(newListItem);
+    function addItem(e) {
+        myList.unshift(e.detail);
         myList = myList;
-        newItem = "";
     }
 
     function removeItem(ix) {
@@ -63,12 +53,7 @@
 
     <span>Inbox</span>
 
-    <form on:submit|preventDefault={addItem}>
-        <div class="idea-input">
-            <TextAreaAutosize bind:value={newItem} maxRows="10" shiftToNL={true} on:enter={addItem} />
-        </div>
-        <button>Add</button>
-    </form>
+    <InboxInput on:add-item={addItem} />
 
     <hr>
 
@@ -92,12 +77,9 @@
     max-width: 200px;
 }
 
-.idea-input {
-    border: 1px solid lightblue;
-}
-
 .container {
     overflow: auto;
     padding: 0.5em;
+    height: 80vh;
 }
 </style>
