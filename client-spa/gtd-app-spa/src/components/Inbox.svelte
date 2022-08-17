@@ -2,78 +2,102 @@
     import Sortable from 'sortablejs';
     import { onMount } from "svelte";
 
+    import IdeaItem from "./IdeaItem.svelte";
+    import TextAreaAutosize from './TextAreaAutosize.svelte';
+
     onMount(async () => {
         setUpSortable();
     });
 
-    let foo, bar;
+    let inboxEl;
 
-    let myList = [{name:'First item', id:1}, {name:'Second item', id:2}, {name:'Third item', id:3}]
+    let newItem = "";
+    let myList = [];
 
     function setUpSortable() {
-        Sortable.create(foo, {
+        Sortable.create(inboxEl, {
             group: {
-                name: 'foo',
-                // put: true,
-                // pull: false,
-            },
-            animation: 200
-        });
-
-        Sortable.create(bar, {
-            group: {
-                name: 'bar',
-                // put: true,
-                // pull: 'clone',
+                name: 'inbox',
+                put: false
             },
             animation: 200,
+            delay: 200,
+            delayOnTouchOnly: true,
             invertSwap: true,
+            swapThreshold: 0.25,
             onSort: (e) => handleContainerChange(e)
         });
     };
 
     function handleContainerChange(ev) {
-        console.log("Container changed!", ev);
         const oldLi = myList[ev.oldIndex];		
         myList.splice(ev.oldIndex, 1);
         myList.splice(ev.newIndex, 0, oldLi);
         myList = myList;
     }
+
+    function addItem(ev) {
+
+        if (newItem == "") return;
+
+        const newListItem = {
+            id: Math.random(),
+            text: newItem,
+        }
+
+        myList.unshift(newListItem);
+        myList = myList;
+        newItem = "";
+    }
+
+    function removeItem(ix) {
+        myList.splice(ix, 1);
+        myList = myList;
+    }
+
 </script>
 
 
 
-<div>
-    <h3>Inbox</h3>
-    <div class="container" bind:this={foo}>
-        <p class="draggable" draggable="true">1</p>
-        <p class="draggable" draggable="true">2</p>
-    </div>
-    <div class="container" bind:this={bar}>
+<div class="inbox">
+
+    <span>Inbox</span>
+
+    <form on:submit|preventDefault={addItem}>
+        <div class="idea-input">
+            <TextAreaAutosize bind:value={newItem} maxRows="10" shiftToNL={true} on:enter={addItem} />
+        </div>
+        <button>Add</button>
+    </form>
+
+    <hr>
+
+    <div class="container" bind:this={inboxEl}>
         {#each myList as listItem, i (listItem.id)}
-        <p class="draggable" draggable="true">{i}. {listItem.name}</p>
+        <IdeaItem idea={listItem} on:remove={() => removeItem(i)} />
         {/each}
     </div>
+
 </div>
-<pre><code>{JSON.stringify(myList, null, 2)}</code></pre>
 
 
 
 <style>
+.inbox {
+    background-color: white;
+    /* border: 1px solid lightblue; */
+    border-radius: 5px;
+    margin: 1em;
+    box-shadow: 0px 1px 1px 0 rgb(0 0 0 / 10%);
+    max-width: 200px;
+}
+
+.idea-input {
+    border: 1px solid lightblue;
+}
+
 .container {
-    background-color: #333;
-    margin: 1em;
-    padding: 1em;
-}
-
-.draggable {
-    background-color: #999;
-    padding: 1em;
-    margin: 1em;
-    cursor: pointer;
-}
-
-.draggable:hover {
-    background-color: #FFF;
+    overflow: auto;
+    padding: 0.5em;
 }
 </style>
