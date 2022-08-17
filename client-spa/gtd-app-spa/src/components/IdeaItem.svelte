@@ -1,5 +1,6 @@
 <script>
 
+    import { slide } from 'svelte/transition';
     import { createEventDispatcher } from 'svelte';
 
     import clickOutside from "../lib/clickOutside";
@@ -43,9 +44,9 @@
 
 
 
-<div class="idea" use:clickOutside on:click_outside={closeMenu}>
+<div class="idea" transition:slide={{duration: 100}} use:clickOutside on:click_outside={closeMenu}>
     {#if menuIsOpen}
-    <div class="shadow">
+    <div class="shadow" transition:slide={{duration: 100}}>
         <div class="menu-row">
             <button type="button" class="remove" on:click={()=>{console.log("Quick!")}}>⚡</button>
             <button type="button" class="remove" on:click={()=>{console.log("Calendar")}}>📆</button>
@@ -64,7 +65,7 @@
     <TextAreaAutosize bind:this={textareaAR} bind:value={idea.text} disabled={!menuIsOpen} minRows="1" maxRows="10" />
 
     {#if menuIsOpen}
-    <div class="menu-row shadow">
+    <div class="menu-row shadow" transition:slide={{duration: 200}}>
         <button type="button" class="remove" class:hidden={allowDelete} on:click={askRemoveItem}>🗑</button>
         <button type="button" class="remove delete" class:hidden={!allowDelete} on:click={removeItem} use:clickOutside on:click_outside={handleClickOutsideDelete}>❗</button>
     </div>
