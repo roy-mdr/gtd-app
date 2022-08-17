@@ -19,6 +19,9 @@
                 name: 'inbox',
                 put: false
             },
+            ghostClass: "sort-item-ghost",  // Class name for the drop placeholder
+            // chosenClass: "sort-item-chosen",  // Class name for the chosen item
+            // dragClass: "sort-item-drag",  // Class name for the dragging item
             animation: 200,
             delay: 200,
             delayOnTouchOnly: true,
@@ -82,4 +85,15 @@
     padding: 0.5em;
     height: 80vh;
 }
+
+:global(.sort-item-ghost) {
+    opacity: 0 !important;
+}
+
+:global(.sort-item-chosen) {
+}
+
+:global(.sort-item-drag) {
+}
+
 </style>
