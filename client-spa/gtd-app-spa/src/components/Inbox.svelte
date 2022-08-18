@@ -3,6 +3,7 @@
     import { onMount } from "svelte";
 
     import InboxInput from './InboxInput.svelte';
+    import Quick from './Quick.svelte';
     import IdeaItem from "./IdeaItem.svelte";
 
     onMount(async () => {
@@ -17,11 +18,9 @@
         Sortable.create(inboxEl, {
             group: {
                 name: 'inbox',
-                put: false
+                put: false, // Is bad idea to let Sortable handle the DOM manipulation between Lists when Svelte is rendering the DOM by data
+                pull: false // Is bad idea to let Sortable handle the DOM manipulation between Lists when Svelte is rendering the DOM by data
             },
-            ghostClass: "sort-item-ghost",  // Class name for the drop placeholder
-            // chosenClass: "sort-item-chosen",  // Class name for the chosen item
-            // dragClass: "sort-item-drag",  // Class name for the dragging item
             animation: 200,
             delay: 200,
             delayOnTouchOnly: true,
@@ -52,11 +51,17 @@
 
 
 
-<div class="inbox">
+<div class="app-section inbox">
 
     <span>Inbox</span>
 
+    <hr>
+
     <InboxInput on:add-item={addItem} />
+
+    <hr>
+
+    <Quick />
 
     <hr>
 
@@ -66,34 +71,19 @@
         {/each}
     </div>
 
+    <!-- <pre><code>{JSON.stringify(myList, null, 2)}</code></pre> -->
+
 </div>
 
 
 
 <style>
 .inbox {
-    background-color: white;
-    /* border: 1px solid lightblue; */
-    border-radius: 5px;
-    margin: 1em;
-    box-shadow: 0px 1px 1px 0 rgb(0 0 0 / 10%);
-    max-width: 200px;
+    grid-area: inbox;
 }
 
 .container {
     overflow: auto;
     padding: 0.5em;
-    height: 80vh;
 }
-
-:global(.sort-item-ghost) {
-    opacity: 0 !important;
-}
-
-:global(.sort-item-chosen) {
-}
-
-:global(.sort-item-drag) {
-}
-
 </style>
