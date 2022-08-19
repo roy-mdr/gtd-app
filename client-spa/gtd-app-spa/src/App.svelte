@@ -9,7 +9,7 @@
 	import Navbar from './components/Navbar.svelte';
 	import Calendar from './components/Calendar.svelte';
 	import Notes from './components/Notes.svelte';
-	import Today from './components/Today.svelte';
+	import Actionables from './components/Actionables.svelte';
 
 	onMount(async () => {
 
@@ -106,7 +106,7 @@
 		<Nest />
 		<Calendar />
 		<Notes />
-		<Today />
+		<Actionables />
 	</section>
 </main>
 

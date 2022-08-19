@@ -1,6 +1,7 @@
 <script>
 
     import { onMount, onDestroy, createEventDispatcher } from "svelte";
+    import { slide } from 'svelte/transition';
 
     const dispatch = createEventDispatcher();
 
@@ -70,24 +71,26 @@
     }
 
     function quickFsSkip() {
+        clearTimeout(interval);
         dispatch('skip');
     }
 
     function quickFsDone() {
+        clearTimeout(interval);
         dispatch('done');
     }
 </script>
 
 
 
-<div class="quick-fs">
-    <div>
+<div class="quick-fs" transition:slide={{duration: 200}}>
+    <div class="task-text">
         {taskText}
     </div>
-    <div>
+    <div class="timer">
         {timer}
     </div>
-    <div>
+    <div class="buttons">
         <button type="button" on:click={quickFsSkip}>Skip...</button>
         <button type="button" on:click={quickFsDone}>Done!</button>
     </div>
@@ -108,5 +111,18 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+}
+
+.task-text {
+    font-size: 50px;
+}
+
+.timer {
+    font-size: 100px;
+    font-weight: 900;
+}
+
+.buttons {
+    margin: 5em;
 }
 </style>

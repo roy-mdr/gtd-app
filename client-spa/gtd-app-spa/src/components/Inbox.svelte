@@ -64,6 +64,27 @@
         myList = myList;
     }
 
+    function removeItemById(ideaId) {
+        for (let i = 0; i < myList.length; i++) {
+            if (myList[i].id == ideaId) {
+                myList.splice(i, 1);
+                break;
+            }
+        }
+
+        myList = myList;
+
+        // Update Inbox in server
+        // Add Idea to tasks done (from: inbox) and update in server
+    }
+
+
+
+    let quickComponent;
+    function toQuick(ideaObj) {
+        quickComponent.quickStart(ideaObj);
+    }
+
 </script>
 
 
@@ -78,14 +99,27 @@
 
     <hr>
 
-    <Quick />
+    <Quick bind:this={quickComponent} on:quick-done={(e) => { removeItemById(e.detail) }} />
 
     <hr>
 
     <div class="container" bind:this={inboxEl}>
+        <!-- There is sometimes a missmatch inthe data and the DOM (handled by Sortable.js lib)
+        so the #key block is necesary to re render the whole list with the actual data -->
+        {#key myList}
         {#each myList as listItem, i (listItem.id)}
-        <IdeaItem idea={listItem} on:remove={() => removeItem(i)} />
+        <IdeaItem
+            idea={listItem}
+            on:remove={(e) => removeItem(i)}
+            on:to-quick={(e) => { toQuick(listItem) }}
+            on:to-calendar={(e) => {  }}
+            on:to-tickler={(e) => {  }}
+            on:to-nest={(e) => {  }}
+            on:to-reference={(e) => {  }}
+            on:to-help={(e) => {  }}
+        />
         {/each}
+        {/key}
     </div>
 
     <!-- <pre><code>{JSON.stringify(myList, null, 2)}</code></pre> -->

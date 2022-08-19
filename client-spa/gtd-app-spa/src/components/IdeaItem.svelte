@@ -44,18 +44,18 @@
 
 
 
-<div class="idea" transition:slide={{duration: 100}} use:clickOutside on:click_outside={closeMenu}>
+<div class="idea" use:clickOutside on:click_outside={closeMenu}>
     {#if menuIsOpen}
     <div class="shadow" transition:slide={{duration: 100}}>
         <div class="menu-row">
-            <button type="button" class="remove" on:click={()=>{console.log("Quick!")}}>⚡</button>
-            <button type="button" class="remove" on:click={()=>{console.log("Calendar")}}>📆</button>
-            <button type="button" class="remove" on:click={()=>{console.log("Tickler")}}>🔔</button>
+            <button type="button" class="remove" on:click={()=>{dispatch('to-quick')}}>⚡</button>
+            <button type="button" class="remove" on:click={()=>{dispatch('to-calendar')}}>📆</button>
+            <button type="button" class="remove" on:click={()=>{dispatch('to-tickler')}}>🔔</button>
         </div>
         <div class="menu-row">
-            <button type="button" class="remove" on:click={()=>{console.log("Nest")}}>🥚</button>
-            <button type="button" class="remove" on:click={()=>{console.log("Reference")}}>📝</button>
-            <button type="button" class="remove" on:click={()=>{console.log("Help")}}>❔</button>
+            <button type="button" class="remove" on:click={()=>{dispatch('to-nest')}}>🥚</button>
+            <button type="button" class="remove" on:click={()=>{dispatch('to-reference')}}>📝</button>
+            <button type="button" class="remove" on:click={()=>{dispatch('to-help')}}>❔</button>
         </div>
     </div>
     {:else}

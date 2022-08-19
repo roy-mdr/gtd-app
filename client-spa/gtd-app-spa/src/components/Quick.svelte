@@ -1,10 +1,12 @@
 <script>
 
-    import { onMount } from "svelte";
+    import { onMount, createEventDispatcher } from "svelte";
 
     import { draggingType, draggingData } from '../stores/dragging';
 
     import QuickFullScreen from './QuickFullScreen.svelte'
+
+    const dispatch = createEventDispatcher();
 
     let dropQuick;
 
@@ -13,8 +15,7 @@
         dropQuick.addEventListener("drop", (e) => {
             if ($draggingType !== "idea") return; // Accept only a certain type
             dropQuick.style.backgroundColor = "";
-            taskText = $draggingData.text;
-            quickStart();
+            quickStart($draggingData);
         });
 
         dropQuick.addEventListener("dragover",  (e) => {
@@ -36,12 +37,13 @@
 
 
 
-    let taskText = "Random task! :D";
+    let ideaObj;
     let quickOn = false;
 
 
 
-    function quickStart() {
+    export function quickStart(gotIdeaObj) {
+        ideaObj = gotIdeaObj;
         quickOn = true;
     }
 
@@ -51,7 +53,7 @@
     }
 
     function quickDone() {
-        console.log("Quick Done!")
+        dispatch('quick-done', ideaObj.id);
         quickOn = false;
     }
 </script>
@@ -60,7 +62,7 @@
 
 {#if quickOn}
 <QuickFullScreen
-{taskText}
+taskText={ideaObj.text}
 on:skip={quickSkip}
 on:done={quickDone}
 />
@@ -68,6 +70,7 @@ on:done={quickDone}
 
 QUICK
 <div bind:this={dropQuick} class="quick" class:drop-here={$draggingType == "idea"} >{":)"}</div>
+
 
 
 <style>
