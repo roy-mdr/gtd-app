@@ -2,7 +2,7 @@
 
 	import { onMount } from "svelte";
 
-	import { draggingEl, overEl } from './stores/dragging';
+	import { draggingEl, overEl, enterEl } from './stores/dragging';
 
 	import Inbox from './components/Inbox.svelte';
 	import Nest from './components/Nest.svelte';
@@ -12,33 +12,73 @@
 	import Today from './components/Today.svelte';
 
 	onMount(async () => {
+
+		// Touch:
 		document.addEventListener("touchmove", (e) => {
 			if ($draggingEl === undefined) return;
 			// ~ drag:
+			$draggingEl.dispatchEvent(new Event('drag'));
 			overEl.update( (el) => document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY) );
+
+			// ~ dragover:
+			$overEl.dispatchEvent(new Event('dragover'));
+
+			if ($enterEl !== $overEl) {
+				if ($enterEl) {
+                    // ~ dragleave:
+					$enterEl.dispatchEvent(new Event('dragleave'));
+                }
+				// ~ dragenter:
+				$overEl.dispatchEvent(new Event('dragenter'));
+				enterEl.update( (el) => $overEl );
+			}
 		});
 
 		document.addEventListener("touchend", (e) => {
 			if ($draggingEl === undefined) return;
 			// ~ drop:
-			console.log("drop touch", $draggingEl );
-			console.log("in", $overEl );
+			// console.log("drop touch", $draggingEl );
+			// console.log("in", $overEl );
 			$overEl.dispatchEvent(new Event('drop'));
+			$draggingEl.dispatchEvent(new Event('dragend'));
+
+			draggingEl.update( (el) => undefined );
+			overEl.update( (el) => undefined );
+			enterEl.update( (el) => undefined );
 		});
 
+		// HTML Fallback:
 		document.addEventListener("mousemove", (e) => {
 			if ($draggingEl === undefined) return;
 			// ~ drag:
+			$draggingEl.dispatchEvent(new Event('drag'));
 			overEl.update( (el) => document.elementFromPoint(e.clientX, e.clientY) );
+
+			// ~ dragover:
 			$overEl.dispatchEvent(new Event('dragover'));
+
+			if ($enterEl !== $overEl) {
+				if ($enterEl) {
+                    // ~ dragleave:
+					$enterEl.dispatchEvent(new Event('dragleave'));
+                }
+				// ~ dragenter:
+				$overEl.dispatchEvent(new Event('dragenter'));
+				enterEl.update( (el) => $overEl );
+			}
 		});
 
 		document.addEventListener("mouseup", (e) => {
 			if ($draggingEl === undefined) return;
 			// ~ drop:
-			console.log("drop mouse fallback", $draggingEl );
-			console.log("in", $overEl );
+			// console.log("drop mouse fallback", $draggingEl );
+			// console.log("in", $overEl );
 			$overEl.dispatchEvent(new Event('drop'));
+			$draggingEl.dispatchEvent(new Event('dragend'));
+
+			draggingEl.update( (el) => undefined );
+			overEl.update( (el) => undefined );
+			enterEl.update( (el) => undefined );
 		});
 
 	});

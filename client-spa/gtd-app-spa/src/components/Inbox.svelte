@@ -32,15 +32,15 @@
             onSort: (e) => handleContainerChange(e),
             onStart: (e) => {
                 // ~ dragstart:
-                draggingEl.update( (el) => e.item );
-                // ~ dataTransfer.setData():
+                draggingEl.update( (el) => e.item ); // trigger
+                // ~ own dataTransfer.setData():
                 draggingType.update( (t) => "idea" );
                 draggingData.update( (d) => myList[e.oldIndex] );
             },
             onEnd: (e) => {
                 // ~ dragend:
-                draggingEl.update( (el) => undefined );
-                // ~ dataTransfer.setData():
+                // draggingEl.update( (el) => undefined ); // kinda unnecesary (it is handled by the polyfill drop event)
+                // ~ own dataTransfer.setData():
                 draggingType.update( (t) => "" );
                 draggingData.update( (d) => "" );
             },
@@ -88,7 +88,7 @@
         {/each}
     </div>
 
-    <!-- <pre><code>{JSON.stringify(myList, null, 2)}</code></pre> -->
+    <pre><code>{JSON.stringify(myList, null, 2)}</code></pre>
 
 </div>
 
