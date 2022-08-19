@@ -2,7 +2,7 @@
 
 	import { onMount } from "svelte";
 
-	import { draggingEl, touchPos, overElement } from './stores/dragging';
+	import { draggingEl, overEl } from './stores/dragging';
 
 	import Inbox from './components/Inbox.svelte';
 	import Nest from './components/Nest.svelte';
@@ -14,30 +14,31 @@
 	onMount(async () => {
 		document.addEventListener("touchmove", (e) => {
 			if ($draggingEl === undefined) return;
-			touchPos.update( (t) => { return {x: e.touches[0].clientX, y: e.touches[0].clientY} } );
-			overElement.update( (el) => document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY) );
+			// ~ drag:
+			overEl.update( (el) => document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY) );
 		});
 
 		document.addEventListener("touchend", (e) => {
-			if ($draggingEl !== undefined) {
-				console.log("drop touch", $draggingEl );
-				console.log("in", $overElement );
-				$overElement.dispatchEvent(new Event('drop'));
-			}
+			if ($draggingEl === undefined) return;
+			// ~ drop:
+			console.log("drop touch", $draggingEl );
+			console.log("in", $overEl );
+			$overEl.dispatchEvent(new Event('drop'));
 		});
 
 		document.addEventListener("mousemove", (e) => {
 			if ($draggingEl === undefined) return;
-			touchPos.update( (t) => { return {x: e.clientX, y: e.clientY} } );
-			overElement.update( (el) => document.elementFromPoint(e.clientX, e.clientY) );
+			// ~ drag:
+			overEl.update( (el) => document.elementFromPoint(e.clientX, e.clientY) );
+			$overEl.dispatchEvent(new Event('dragover'));
 		});
 
 		document.addEventListener("mouseup", (e) => {
-			if ($draggingEl !== undefined) {
-				console.log("drop mouse fallback", $draggingEl );
-				console.log("in", $overElement );
-				$overElement.dispatchEvent(new Event('drop'));
-			}
+			if ($draggingEl === undefined) return;
+			// ~ drop:
+			console.log("drop mouse fallback", $draggingEl );
+			console.log("in", $overEl );
+			$overEl.dispatchEvent(new Event('drop'));
 		});
 
 	});
@@ -49,9 +50,7 @@
 <main class="app">
 	<!-- <h1>Getting Things Done!</h1> -->
 	<Navbar />
-	{$touchPos.x}
-    {$touchPos.y}
-    {$overElement}
+
 	<section class="view-main">
 		<Inbox />
 		<Nest />

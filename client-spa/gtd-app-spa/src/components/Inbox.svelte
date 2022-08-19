@@ -31,12 +31,16 @@
             forceFallback: true,
             onSort: (e) => handleContainerChange(e),
             onStart: (e) => {
+                // ~ dragstart:
                 draggingEl.update( (el) => e.item );
+                // ~ dataTransfer.setData():
                 draggingType.update( (t) => "idea" );
                 draggingData.update( (d) => myList[e.oldIndex] );
             },
             onEnd: (e) => {
+                // ~ dragend:
                 draggingEl.update( (el) => undefined );
+                // ~ dataTransfer.setData():
                 draggingType.update( (t) => "" );
                 draggingData.update( (d) => "" );
             },

@@ -2,7 +2,7 @@
 
     import { onMount } from "svelte";
 
-    import { draggingEl, overElement, draggingType, draggingData } from '../stores/dragging';
+    import { draggingEl, overEl, enterEl, draggingType, draggingData } from '../stores/dragging';
 
     let dropQuick;
 
@@ -11,7 +11,7 @@
         // For all APIs, Fallbacks and Workarounds:
         dropQuick.addEventListener("drop", (e) => {
             if ($draggingType !== "idea") return; // Accept only a certain type
-            console.log("drop");
+            console.log("HTML5 drop");
             dropQuick.style.backgroundColor = "yellow";
             taskText = $draggingData.text;
             quickStart();
@@ -19,18 +19,20 @@
 
         // Drag And Drop HTML5 API:
         dropQuick.addEventListener("dragover",  (e) => {
+            console.log("HTML5 dragover");
             if ($draggingType !== "idea") return; // Accept only a certain type
             e.preventDefault(); // preventDefault == you can drop in here!
         });
 
         dropQuick.addEventListener("dragenter", (e) => {
+            console.log("HTML5 dragenter");
             if ($draggingType !== "idea") return; // Accept only a certain type
-            console.log("dragenter");
             dropQuick.style.backgroundColor = "red";
         });
+
         dropQuick.addEventListener("dragleave", (e) => {
+            console.log("HTML5 dragleave");
             if ($draggingType !== "idea") return; // Accept only a certain type
-            console.log("dragleave");
             dropQuick.style.backgroundColor = "";
         });
 
@@ -54,16 +56,25 @@
 
         // Touch Workaround:
         document.addEventListener("touchmove", (e) => {
-            if ($draggingEl === undefined || $overElement === undefined) return;
-            if ($draggingType !== "idea") return; // Accept only a certain type
-            if (   $overElement === dropQuick
-                || $overElement.parentNode === dropQuick // In case of a ghost element, the element at touch point is the ghost element and thus we need to check if the parent of the ghost element is the targetElement.
+            if ($draggingEl === undefined || $overEl === undefined) return;
+            if (   $overEl === dropQuick
+                || $overEl.parentNode === dropQuick // In case of a ghost element, the element at touch point is the ghost element and thus we need to check if the parent of the ghost element is the targetElement.
                 ) {
+                if ($enterEl !== dropQuick) {
+                    // ~ dragenter:
+                    console.log("dragenter touch");
+                    enterEl.update( (el) => dropQuick );
+                }
                 // ~ dragover:
+                console.log("dragover touch");
                 dropQuick.style.backgroundColor = "blue";
             } else {
+                if ($enterEl === dropQuick) {
+                    // ~ dragleave:
+                    console.log("dragleave touch");
+                    enterEl.update( (el) => undefined );
+                }
                 // dragging outside:
-                dropQuick.style.backgroundColor = "purple";
             }
         });
     });
