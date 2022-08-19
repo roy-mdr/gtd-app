@@ -36,6 +36,14 @@
 
 
 
+        dragMe.addEventListener("dragstart", (e) => {
+            console.log("HTML5 dragstart");
+            draggingEl.update( (el) => dragMe ); // trigger
+            draggingType.update( (t) => "idea" );
+            draggingData.update( (d) => { return {text: "container :)"} } );
+            dragMe.style.backgroundColor = "blue";
+        });
+
         dragMe.addEventListener("drag", (e) => {
             console.log("HTML5 drag");
             dragMe.style.backgroundColor = "purple";
@@ -46,34 +54,6 @@
             draggingType.update( (t) => "" );
             draggingData.update( (d) => "" );
             dragMe.style.backgroundColor = "orange";
-        });
-
-
-        // dragstart:
-        /* dragMe.addEventListener("dragstart", (e) => {
-            console.log("HTML5 dragstart");
-            draggingEl.update( (el) => dragMe ); // trigger
-            draggingType.update( (t) => "idea" );
-            draggingData.update( (d) => { return {text: "container :)"} } );
-            dragMe.style.backgroundColor = "blue";
-        }); */
-
-        dragMe.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-            console.log("HTML5 mousedown");
-            draggingEl.update( (el) => dragMe ); // trigger
-            draggingType.update( (t) => "idea" );
-            draggingData.update( (d) => { return {text: "container :)"} } );
-            dragMe.style.backgroundColor = "blue";
-        });
-
-        dragMe.addEventListener("touchstart", (e) => {
-            e.preventDefault();
-            console.log("HTML5 touchstart");
-            draggingEl.update( (el) => dragMe ); // trigger
-            draggingType.update( (t) => "idea" );
-            draggingData.update( (d) => { return {text: "container :)"} } );
-            dragMe.style.backgroundColor = "blue";
         });
 
     });
@@ -161,7 +141,7 @@
 
 QUICK
 <div bind:this={dropQuick} class="quick" class:drop-here={$draggingType == "idea"} >{":)"}</div>
-<div bind:this={dragMe} class="quick">{"Drag me!"}</div>
+<div bind:this={dragMe} class="quick" draggable="true">{"Drag me!"}</div>
 
 
 <style>
