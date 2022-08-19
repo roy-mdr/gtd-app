@@ -88,7 +88,7 @@
         {/each}
     </div>
 
-    <pre><code>{JSON.stringify(myList, null, 2)}</code></pre>
+    <!-- <pre><code>{JSON.stringify(myList, null, 2)}</code></pre> -->
 
 </div>
 
