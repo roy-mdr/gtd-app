@@ -39,12 +39,16 @@
 			// ~ drop:
 			// console.log("drop touch", $draggingEl );
 			// console.log("in", $overEl );
-			$overEl.dispatchEvent(new Event('drop'));
-			$draggingEl.dispatchEvent(new Event('dragend'));
 
-			draggingEl.update( (el) => undefined );
-			overEl.update( (el) => undefined );
+			if ($overEl !== undefined) {
+				$overEl.dispatchEvent(new Event('drop'));
+				overEl.update( (el) => undefined );
+			}
+
 			enterEl.update( (el) => undefined );
+
+			$draggingEl.dispatchEvent(new Event('dragend'));
+			draggingEl.update( (el) => undefined );
 		});
 
 		// HTML Fallback:
@@ -73,12 +77,16 @@
 			// ~ drop:
 			// console.log("drop mouse fallback", $draggingEl );
 			// console.log("in", $overEl );
-			$overEl.dispatchEvent(new Event('drop'));
-			$draggingEl.dispatchEvent(new Event('dragend'));
 
-			draggingEl.update( (el) => undefined );
-			overEl.update( (el) => undefined );
+			if ($overEl !== undefined) {
+				$overEl.dispatchEvent(new Event('drop'));
+				overEl.update( (el) => undefined );
+			}
+
 			enterEl.update( (el) => undefined );
+
+			$draggingEl.dispatchEvent(new Event('dragend'));
+			draggingEl.update( (el) => undefined );
 		});
 
 	});

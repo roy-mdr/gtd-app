@@ -2,9 +2,9 @@
 
     import { onMount } from "svelte";
 
-    import { draggingType, draggingData } from '../stores/dragging';
+    import { draggingEl, draggingType, draggingData } from '../stores/dragging';
 
-    let dropQuick;
+    let dropQuick,dragMe;
 
     onMount(async () => {
 
@@ -32,6 +32,48 @@
             console.log("HTML5 dragleave");
             if ($draggingType !== "idea") return; // Accept only a certain type
             dropQuick.style.backgroundColor = "";
+        });
+
+
+
+        dragMe.addEventListener("drag", (e) => {
+            console.log("HTML5 drag");
+            dragMe.style.backgroundColor = "purple";
+        });
+
+        dragMe.addEventListener("dragend", (e) => {
+            console.log("HTML5 dragend");
+            draggingType.update( (t) => "" );
+            draggingData.update( (d) => "" );
+            dragMe.style.backgroundColor = "orange";
+        });
+
+
+        // dragstart:
+        /* dragMe.addEventListener("dragstart", (e) => {
+            console.log("HTML5 dragstart");
+            draggingEl.update( (el) => dragMe ); // trigger
+            draggingType.update( (t) => "idea" );
+            draggingData.update( (d) => { return {text: "container :)"} } );
+            dragMe.style.backgroundColor = "blue";
+        }); */
+
+        dragMe.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            console.log("HTML5 mousedown");
+            draggingEl.update( (el) => dragMe ); // trigger
+            draggingType.update( (t) => "idea" );
+            draggingData.update( (d) => { return {text: "container :)"} } );
+            dragMe.style.backgroundColor = "blue";
+        });
+
+        dragMe.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            console.log("HTML5 touchstart");
+            draggingEl.update( (el) => dragMe ); // trigger
+            draggingType.update( (t) => "idea" );
+            draggingData.update( (d) => { return {text: "container :)"} } );
+            dragMe.style.backgroundColor = "blue";
         });
 
     });
@@ -118,7 +160,8 @@
 {/if}
 
 QUICK
-<div bind:this={dropQuick} class="quick" class:drop-here={$draggingType == "idea"}>{":)"}</div>
+<div bind:this={dropQuick} class="quick" class:drop-here={$draggingType == "idea"} >{":)"}</div>
+<div bind:this={dragMe} class="quick">{"Drag me!"}</div>
 
 
 <style>
