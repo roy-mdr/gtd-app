@@ -2,6 +2,8 @@
     import Sortable from 'sortablejs';
     import { onMount } from "svelte";
 
+    import { draggingEl, draggingType, draggingData } from '../stores/dragging';
+
     import InboxInput from './InboxInput.svelte';
     import Quick from './Quick.svelte';
     import IdeaItem from "./IdeaItem.svelte";
@@ -26,7 +28,18 @@
             delayOnTouchOnly: true,
             invertSwap: true,
             swapThreshold: 0.25,
-            onSort: (e) => handleContainerChange(e)
+            forceFallback: true,
+            onSort: (e) => handleContainerChange(e),
+            onStart: (e) => {
+                draggingEl.update( (el) => e.item );
+                draggingType.update( (t) => "idea" );
+                draggingData.update( (d) => myList[e.oldIndex] );
+            },
+            onEnd: (e) => {
+                draggingEl.update( (el) => undefined );
+                draggingType.update( (t) => "" );
+                draggingData.update( (d) => "" );
+            },
         });
     };
 
