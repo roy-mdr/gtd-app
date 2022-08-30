@@ -23,6 +23,7 @@
                 put: false, // Is bad idea to let Sortable handle the DOM manipulation between Lists when Svelte is rendering the DOM by data
                 pull: false // Is bad idea to let Sortable handle the DOM manipulation between Lists when Svelte is rendering the DOM by data
             },
+            revertDOM: true,
             animation: 200,
             delay: 200,
             delayOnTouchOnly: true,
@@ -104,9 +105,6 @@
     <hr>
 
     <div class="container" bind:this={inboxEl}>
-        <!-- There is sometimes a missmatch inthe data and the DOM (handled by Sortable.js lib)
-        so the #key block is necesary to re render the whole list with the actual data -->
-        {#key myList}
         {#each myList as listItem, i (listItem.id)}
         <IdeaItem
             idea={listItem}
@@ -119,7 +117,6 @@
             on:to-help={(e) => {  }}
         />
         {/each}
-        {/key}
     </div>
 
     <!-- <pre><code>{JSON.stringify(myList, null, 2)}</code></pre> -->

@@ -44,7 +44,7 @@
 
 
 
-<div class="idea" use:clickOutside on:click_outside={closeMenu}>
+<div class="idea" transition:slide={{duration: 200}} use:clickOutside on:click_outside={closeMenu}>
     {#if menuIsOpen}
     <div class="shadow" transition:slide={{duration: 100}}>
         <div class="menu-row">
