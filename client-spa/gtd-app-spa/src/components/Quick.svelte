@@ -1,4 +1,5 @@
 <script>
+    import Sortable from 'sortablejs';
 
     import { onMount, createEventDispatcher } from "svelte";
 
@@ -8,32 +9,35 @@
 
     const dispatch = createEventDispatcher();
 
-    let dropQuick;
-
     onMount(async () => {
-
-        dropQuick.addEventListener("drop", (e) => {
-            if ($draggingType !== "idea") return; // Accept only a certain type
-            dropQuick.style.backgroundColor = "";
-            quickStart($draggingData);
-        });
-
-        dropQuick.addEventListener("dragover",  (e) => {
-            if ($draggingType !== "idea") return; // Accept only a certain type
-            e.preventDefault(); // preventDefault == you can drop in here!
-        });
-
-        dropQuick.addEventListener("dragenter", (e) => {
-            if ($draggingType !== "idea") return; // Accept only a certain type
-            dropQuick.style.backgroundColor = "red";
-        });
-
-        dropQuick.addEventListener("dragleave", (e) => {
-            if ($draggingType !== "idea") return; // Accept only a certain type
-            dropQuick.style.backgroundColor = "";
-        });
-
+        setUpSortable();
     });
+
+    let dropQuick;
+    let isHover = false;
+
+    function setUpSortable() {
+        Sortable.create(dropQuick, {
+            group: {
+                name: 'quick',
+                put: ['inbox']
+            },
+            revertDOM: true,
+            animation: 200,
+            delay: 200,
+            delayOnTouchOnly: true,
+            invertSwap: true,
+            swapThreshold: 0.25,
+            onAdd: (e) => {
+                // drag from one list and drop into another
+
+                if (e.fromSortable.options.group.name == 'inbox' &&  $draggingType == "idea" ) {
+                    quickStart($draggingData);
+                }
+
+            },
+        });
+    };
 
 
 
@@ -69,7 +73,7 @@ on:done={quickDone}
 {/if}
 
 QUICK
-<div bind:this={dropQuick} class="quick" class:drop-here={$draggingType == "idea"} >{":)"}</div>
+<div bind:this={dropQuick} class="quick" class:drop-here={$draggingType == "idea"} class:hovered={isHover} ><span>{":) "}{isHover}</span></div>
 
 
 
@@ -79,7 +83,15 @@ QUICK
     padding: 1em;
 }
 
+.quick :global(.sortable-ghost) {
+    display: none !important;
+}
+
 .drop-here {
     background-color: greenyellow;
+}
+
+.hovered {
+    border: 2px solid red !important;
 }
 </style>

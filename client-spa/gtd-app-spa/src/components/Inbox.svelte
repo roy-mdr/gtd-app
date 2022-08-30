@@ -2,7 +2,7 @@
     import Sortable from 'sortablejs';
     import { onMount } from "svelte";
 
-    import { draggingEl, draggingType, draggingData } from '../stores/dragging';
+    import { draggingType, draggingData } from '../stores/dragging';
 
     import InboxInput from './InboxInput.svelte';
     import Quick from './Quick.svelte';
@@ -20,8 +20,8 @@
         Sortable.create(inboxEl, {
             group: {
                 name: 'inbox',
-                put: false, // Is bad idea to let Sortable handle the DOM manipulation between Lists when Svelte is rendering the DOM by data
-                pull: false // Is bad idea to let Sortable handle the DOM manipulation between Lists when Svelte is rendering the DOM by data
+                put: false,
+                // pull: false
             },
             revertDOM: true,
             animation: 200,
@@ -29,11 +29,11 @@
             delayOnTouchOnly: true,
             invertSwap: true,
             swapThreshold: 0.25,
-            forceFallback: true,
+            // forceFallback: true,
             onSort: (e) => handleContainerChange(e),
             onStart: (e) => {
                 // ~ dragstart:
-                draggingEl.update( (el) => e.item ); // trigger
+                // draggingEl.update( (el) => e.item ); // trigger
                 // ~ own dataTransfer.setData():
                 draggingType.update( (t) => "idea" );
                 draggingData.update( (d) => myList[e.oldIndex] );
