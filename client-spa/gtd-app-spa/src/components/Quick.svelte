@@ -28,13 +28,16 @@
             delayOnTouchOnly: true,
             invertSwap: true,
             swapThreshold: 0.25,
+            onDragIn:  (e) => { isHover = true },
+            onDragOut: (e) => { isHover = false },
             onAdd: (e) => {
                 // drag from one list and drop into another
 
-                if (e.fromSortable.options.group.name == 'inbox' &&  $draggingType == "idea" ) {
+                if (e.fromSortable.options.group.name == 'inbox' &&  $draggingType == "idea" && isHover ) {
                     quickStart($draggingData);
                 }
 
+                isHover = false;
             },
         });
     };

@@ -106,16 +106,19 @@
 
     <div class="container" bind:this={inboxEl}>
         {#each myList as listItem, i (listItem.id)}
-        <IdeaItem
-            idea={listItem}
-            on:remove={(e) => removeItem(i)}
-            on:to-quick={(e) => { toQuick(listItem) }}
-            on:to-calendar={(e) => {  }}
-            on:to-tickler={(e) => {  }}
-            on:to-nest={(e) => {  }}
-            on:to-reference={(e) => {  }}
-            on:to-help={(e) => {  }}
-        />
+        <!-- I found that wrapping in a div all your code inside an each block helps a LOT with DOM consistency :) fck that bug... but quite my fault tbh -->
+        <div>
+            <IdeaItem
+                idea={listItem}
+                on:remove={(e) => removeItem(i)}
+                on:to-quick={(e) => { toQuick(listItem) }}
+                on:to-calendar={(e) => {  }}
+                on:to-tickler={(e) => {  }}
+                on:to-nest={(e) => {  }}
+                on:to-reference={(e) => {  }}
+                on:to-help={(e) => {  }}
+            />
+        </div>
         {/each}
     </div>
 
