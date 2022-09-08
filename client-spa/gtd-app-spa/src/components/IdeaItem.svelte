@@ -90,7 +90,7 @@
 }
 
 .idea:hover {
-    box-shadow: 0px 10px 20px 0 rgb(0 0 0 / 10%);
+    box-shadow: 0px 5px 10px 0 rgb(0 0 0 / 10%);
 }
 
 .idea:focus-within {
