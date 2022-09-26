@@ -16,7 +16,6 @@
     let projectContentEl;
     const acceptPut = ["inbox", "incubator", "incubatorProject"];
     let isHover = false;
-    let isOpen = false;
 
     function setUpSortable() {
         Sortable.create(projectContentEl, {
@@ -51,12 +50,29 @@
             onAdd: (e) => {
                 const wasHover = isHover;
                 isHover = false;
+
                 if ( idExist($draggingData.id, projectData.content) ) return;
+
                 if ( $draggingData.type == 'project' ) return;
+
                 if ( acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "task" && wasHover ) {
                     projectData.content.splice(e.newIndex, 0, $draggingData);
                     $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
                     updateAndTell();
+                }
+
+                if ( wasHover && acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "idea" ) {
+                    $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
+                    addItem(e, {
+                        type: "task",
+                        id: $draggingData.id,
+                        text: $draggingData.text,
+                        tags: ["e", "n"],
+                        deadline: "Date",
+                        time: "Int",
+                        cost: "Int",
+                        after: "Task"
+                    } );
                 }
             }
         });
@@ -73,8 +89,8 @@
         updateAndTell();
     }
 
-    function addItem(e) {
-        projectData.content.unshift(e.detail);
+    function addItem(e, dataObj) {
+        projectData.content.splice(e.newIndex, 0, dataObj);
         updateAndTell();
     }
 
@@ -103,8 +119,8 @@
 
 
 <div class="idea">
-    <b on:click={ () => {isOpen = !isOpen} }>{projectData.name}</b>
-    <div bind:this={projectContentEl} transition:slide={{duration: 200}}  class="container" class:closed={!isOpen} class:drop-here={$draggingType == "task"} class:is-hover={isHover}>
+    <b on:click={ () => {projectData._isOpen = !projectData._isOpen} }>{projectData.name}</b>
+    <div bind:this={projectContentEl} transition:slide={{duration: 200}}  class="container" class:closed={!projectData._isOpen} class:drop-here={$draggingType == "task"} class:is-hover={isHover}>
         {#each projectData.content as projectTask (projectTask.id)}
         <div class="idea">{projectTask.text}</div>
         {/each}
@@ -116,8 +132,8 @@
 <style>
     .container {
         /* padding: 0.5em; */
-        transition: height 0.2s;
-        min-height: 1em;
+        /* transition: height 0.2s; */
+        /* min-height: 1em; */
     }
 
     .idea {

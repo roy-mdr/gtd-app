@@ -48,13 +48,30 @@
             onDragOut: (e) => { isHover = false },
             onDrop: (e) => { isHover = false },
             onAdd: (e) => {
+                const wasHover = isHover;
+                isHover = false;
+
                 if ( idExist($draggingData.id, incubatorData.content) ) return;
-                if ( acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "task" && isHover ) {
+
+                if ( wasHover && acceptPut.includes(e.fromSortable.options.group.name) && $draggingType == "task" ) {
                     incubatorData.content.splice(e.newIndex, 0, $draggingData);
                     $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
                     dispatch('update');
                 }
-                isHover = false;
+
+                if ( wasHover && acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "idea" ) {
+                    $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
+                    addItem(e, {
+                        type: "task",
+                        id: $draggingData.id,
+                        text: $draggingData.text,
+                        tags: ["p", "o"],
+                        deadline: "Date",
+                        time: "Int",
+                        cost: "Int",
+                        after: "Task"
+                    } );
+                }
             }
         });
 
@@ -70,8 +87,8 @@
         dispatch('update');
     }
 
-    function addItem(e) {
-        incubatorData.content.unshift(e.detail);
+    function addItem(e, dataObj) {
+        incubatorData.content.splice(e.newIndex, 0, dataObj);
         dispatch('update');
     }
 
@@ -118,6 +135,7 @@ function updateAndTell() {
     .incubadora {
         margin: 0.5em;
         padding: 0.5em;
+        height: max-content;
     }
 
     .container {

@@ -2,7 +2,7 @@
     import Sortable from 'sortablejs';
     import { onMount } from "svelte";
 
-    import { draggingType, draggingData } from '../stores/dragging';
+    import { draggingType, draggingData, draggingParentEl } from '../stores/dragging';
 
     import InboxInput from './InboxInput.svelte';
     import Quick from './Quick.svelte';
@@ -37,6 +37,7 @@
                 // ~ own dataTransfer.setData():
                 draggingType.update( (t) => "idea" );
                 draggingData.update( (d) => myList[e.oldIndex] );
+                draggingParentEl.update( (p) => inboxEl );
             },
             onEnd: (e) => {
                 // ~ dragend:
@@ -44,8 +45,13 @@
                 // ~ own dataTransfer.setData():
                 draggingType.update( (t) => "" );
                 draggingData.update( (d) => "" );
+                draggingParentEl.update( (p) => undefined );
             },
         });
+
+        inboxEl.addEventListener('removeItem', (e) => {
+            removeItem(e.detail);
+        })
     };
 
     function handleContainerChange(ev) {

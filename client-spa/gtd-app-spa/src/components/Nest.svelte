@@ -20,6 +20,7 @@
         createdAt: Date,
         updatedAt: Date,
         deletedAt: Date,
+        _isOpen: Bool,
     }
 
     interface Task: {
@@ -64,6 +65,7 @@
                     name: "asdf",
                     deadline: Date,
                     description: String,
+                    _isOpen: Bool,
                     content: [
                         {
                             type: "task",
@@ -87,8 +89,6 @@
     import { onMount } from "svelte";
     import IncubatorNew from './IncubatorNew.svelte';
     import Incubator from './Incubator.svelte';
-
-    import { draggingType, draggingData } from '../stores/dragging';
 
     onMount(async () => {
         setUpSortable();
@@ -151,6 +151,7 @@
                     name: "project 222",
                     deadline: "Date",
                     description: "String",
+                    _isOpen: true,
                     content: [
                         {
                             type: "task",
@@ -188,6 +189,7 @@
                     name: "project 555",
                     deadline: "Date",
                     description: "String",
+                    _isOpen: true,
                     content: [
                         {
                             type: "task",
