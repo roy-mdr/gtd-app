@@ -7,18 +7,21 @@
 	import Notes from './components/Notes.svelte';
 	import Actionables from './components/Actionables.svelte';
 
+	let elInbox, elNest, elCalendar, elNotes, elActionables;
 </script>
 
-<main class="app">
+<main class="app light-theme">
 	<!-- <h1>Getting Things Done!</h1> -->
 	<Navbar />
 
 	<section class="view-main">
-		<Inbox />
-		<Nest />
-		<Calendar />
-		<Notes />
-		<Actionables />
+		<Inbox bind:this={elInbox}
+			on:inbox-to-nest={elNest.fromInboxClick}
+		/>
+		<Nest bind:this={elNest} />
+		<Calendar bind:this={elCalendar} />
+		<Notes bind:this={elNotes} />
+		<Actionables bind:this={elActionables} />
 	</section>
 </main>
 

@@ -1,20 +1,21 @@
 <script>
     import Sortable from 'sortablejs';
-    import { onMount } from "svelte";
+    import { onMount, createEventDispatcher } from "svelte";
 
     import { draggingType, draggingData, draggingParentEl } from '../stores/dragging';
+    import { inbox } from '../stores/appData';
 
     import InboxInput from './InboxInput.svelte';
     import Quick from './Quick.svelte';
     import IdeaItem from "./IdeaItem.svelte";
+
+    const dispatch = createEventDispatcher();
 
     onMount(async () => {
         setUpSortable();
     });
 
     let inboxEl;
-
-    let myList = [];
 
     function setUpSortable() {
         Sortable.create(inboxEl, {
@@ -36,7 +37,7 @@
                 // draggingEl.update( (el) => e.item ); // trigger
                 // ~ own dataTransfer.setData():
                 draggingType.update( (t) => "idea" );
-                draggingData.update( (d) => myList[e.oldIndex] );
+                draggingData.update( (d) => $inbox[e.oldIndex] );
                 draggingParentEl.update( (p) => inboxEl );
             },
             onEnd: (e) => {
@@ -55,34 +56,22 @@
     };
 
     function handleContainerChange(ev) {
-        const oldLi = myList[ev.oldIndex];		
-        myList.splice(ev.oldIndex, 1);
-        myList.splice(ev.newIndex, 0, oldLi);
-        myList = myList;
+        const oldLi = $inbox[ev.oldIndex];
+        $inbox.splice(ev.oldIndex, 1);
+        $inbox.splice(ev.newIndex, 0, oldLi);
+        $inbox = $inbox;
     }
 
     function addItem(e) {
-        myList.unshift(e.detail);
-        myList = myList;
+        inbox.addIdea(e.detail);
     }
 
     function removeItem(ix) {
-        myList.splice(ix, 1);
-        myList = myList;
+        inbox.removeIdeaByIndex(ix);
     }
 
     function removeItemById(ideaId) {
-        for (let i = 0; i < myList.length; i++) {
-            if (myList[i].id == ideaId) {
-                myList.splice(i, 1);
-                break;
-            }
-        }
-
-        myList = myList;
-
-        // Update Inbox in server
-        // Add Idea to tasks done (from: inbox) and update in server
+        inbox.removeIdeaById(ideaId);
     }
 
 
@@ -111,7 +100,7 @@
     <hr>
 
     <div class="container" bind:this={inboxEl}>
-        {#each myList as listItem, i (listItem.id)}
+        {#each $inbox as listItem, i (listItem.id)}
         <!-- I found that wrapping in a div all your code inside an each block helps a LOT with DOM consistency :) fck that bug... but quite my fault tbh -->
         <div>
             <IdeaItem
@@ -120,7 +109,7 @@
                 on:to-quick={(e) => { toQuick(listItem) }}
                 on:to-calendar={(e) => {  }}
                 on:to-tickler={(e) => {  }}
-                on:to-nest={(e) => {  }}
+                on:to-nest={(e) => { dispatch('inbox-to-nest', listItem) }}
                 on:to-reference={(e) => {  }}
                 on:to-help={(e) => {  }}
             />
@@ -128,7 +117,7 @@
         {/each}
     </div>
 
-    <!-- <pre><code>{JSON.stringify(myList, null, 2)}</code></pre> -->
+    <!-- <pre><code>{JSON.stringify($inbox, null, 2)}</code></pre> -->
 
 </div>
 

@@ -28,7 +28,11 @@
             delayOnTouchOnly: true,
             invertSwap: true,
             swapThreshold: 0.25,
-            onDragIn:  (e) => { isHover = true },
+            onDragIn:  (e) => {
+                if ($draggingType == "idea" && !isHover ) {
+                    isHover = true
+                }
+            },
             onDragOut: (e) => { isHover = false },
             onAdd: (e) => {
                 // drag from one list and drop into another

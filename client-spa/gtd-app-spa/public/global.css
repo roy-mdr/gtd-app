@@ -32,3 +32,40 @@ input, button, select, textarea {
 
 /* .sortable-drag {
 } */
+
+
+
+
+:root {
+	/* colors */
+	/* --background: white; */
+	/* --carpet: #f1f3f4; */
+	/* --main-text: #222; */
+  
+	/* shadows */
+	--default-shadow: 0px 2px 8px 0px rgb(0 0 0 / 20%);
+  
+	/* time */
+	--speed-normal: 0.2s;
+  }
+
+.light-theme {
+	--background: white;
+	--carpet: #f1f3f4;
+	--mid: #999; /* Between carpet and main-text */
+	--main-text: #222;
+	/* --accent: #c81414; */
+	/* --accent: #cf3b3b; */
+	--accent: #e24848;
+  }
+
+
+
+  .noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	  -webkit-user-select: none; /* Safari */
+	   -khtml-user-select: none; /* Konqueror HTML */
+		 -moz-user-select: none; /* Old versions of Firefox */
+		  -ms-user-select: none; /* Internet Explorer/Edge */
+			  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  }

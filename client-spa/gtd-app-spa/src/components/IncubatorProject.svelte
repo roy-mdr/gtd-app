@@ -62,7 +62,12 @@
                 }
 
                 if ( wasHover && acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "idea" ) {
-                    $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
+                    dispatch('inbox-to-project', {
+                        incubator: "...",
+                        project: projectData.id,
+                        idea: $draggingData
+                    });
+                    /* $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
                     addItem(e, {
                         type: "task",
                         id: $draggingData.id,
@@ -72,7 +77,7 @@
                         time: "Int",
                         cost: "Int",
                         after: "Task"
-                    } );
+                    } ); */
                 }
             }
         });
@@ -130,11 +135,11 @@
 
 
 <style>
-    .container {
+    /* .container { */
         /* padding: 0.5em; */
         /* transition: height 0.2s; */
         /* min-height: 1em; */
-    }
+    /* } */
 
     .idea {
         background-color: white;

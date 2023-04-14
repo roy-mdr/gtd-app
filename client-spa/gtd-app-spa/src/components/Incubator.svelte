@@ -60,7 +60,12 @@
                 }
 
                 if ( wasHover && acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "idea" ) {
-                    $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
+                    dispatch('inbox-to-incubator', {
+                        incubator: incubatorData.id,
+                        project: null,
+                        idea: $draggingData
+                    });
+                    /* $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
                     addItem(e, {
                         type: "task",
                         id: $draggingData.id,
@@ -70,7 +75,7 @@
                         time: "Int",
                         cost: "Int",
                         after: "Task"
-                    } );
+                    } ); */
                 }
             }
         });
@@ -112,6 +117,15 @@ function updateAndTell() {
     dispatch('update');
 }
 
+
+    function inboxToProject(ev) {
+        dispatch('inbox-to-incubator', {
+            incubator: incubatorData.id,
+            project: ev.detail.project,
+            idea: ev.detail.idea
+        });
+    }
+
 </script>
 
 
@@ -123,7 +137,7 @@ function updateAndTell() {
             {#if incubatorItem.type == "task"}
             <div class="idea">{incubatorItem.text}</div>
             {:else if incubatorItem.type == "project"}
-            <IncubatorProject projectData={incubatorItem} on:update={updateAndTell} />
+            <IncubatorProject projectData={incubatorItem} on:update={updateAndTell} on:inbox-to-project={inboxToProject}/>
             {/if}
         {/each}
     </div>
