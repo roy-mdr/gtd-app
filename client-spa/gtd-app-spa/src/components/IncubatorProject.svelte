@@ -148,17 +148,16 @@
         }}>{projectData.name}</b
     >
     {#if projectData._isOpen}
-        <div transition:slide|local={{ duration: 200 }}>
-            <div
-                bind:this={projectContentElOpen}
-                class="container"
-                class:drop-here={$draggingType == "task"}
-                class:is-hover={isHover}
-            >
-                {#each projectData.content as projectTask (projectTask.id)}
-                    <div class="idea">{projectTask.text}</div>
-                {/each}
-            </div>
+        <div
+            bind:this={projectContentElOpen}
+            transition:slide|local={{ duration: 200 }}
+            class="container"
+            class:drop-here={$draggingType == "task"}
+            class:is-hover={isHover}
+        >
+            {#each projectData.content as projectTask (projectTask.id)}
+                <div class="idea">{projectTask.text}</div>
+            {/each}
         </div>
     {:else}
         <div bind:this={projectContentElClose} class="container" />
