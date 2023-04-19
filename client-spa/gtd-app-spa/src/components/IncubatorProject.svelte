@@ -17,12 +17,26 @@
 
     export let projectData;
 
-    let projectContentEl;
+    let initOpenEl = false;
+    let initCloseEl = false;
+    let projectContentElOpen;
+    let projectContentElClose;
     const acceptPut = ["inbox", "incubator", "incubatorProject"];
     let isHover = false;
 
-    $: !projectContentEl || setUpSortable();
-    function setUpSortable() {
+    $: !projectContentElOpen || setUpSortable("open");
+    $: !projectContentElClose || setUpSortable("close");
+    function setUpSortable(setupElement) {
+        let projectContentEl;
+
+        if (setupElement == "open") {
+            if (initOpenEl || !projectContentElOpen) {
+                return;
+            }
+            projectContentEl = projectContentElOpen;
+            // initOpenEl = true;
+        }
+
         if (!projectContentEl) return;
 
         Sortable.create(projectContentEl, {
@@ -152,9 +166,8 @@
     {#if projectData._isOpen}
         <div transition:slide|local={{ duration: 200 }}>
             <div
-                bind:this={projectContentEl}
+                bind:this={projectContentElOpen}
                 class="container"
-                class:closed={!projectData._isOpen}
                 class:drop-here={$draggingType == "task"}
                 class:is-hover={isHover}
             >
@@ -163,6 +176,8 @@
                 {/each}
             </div>
         </div>
+    {:else}
+        <div bind:this={projectContentElClose} class="container" />
     {/if}
 </div>
 
@@ -190,10 +205,6 @@
 
     .idea:hover {
         box-shadow: 0px 5px 10px 0 rgb(0 0 0 / 10%);
-    }
-
-    .closed {
-        height: 0;
     }
 
     .drop-here {
