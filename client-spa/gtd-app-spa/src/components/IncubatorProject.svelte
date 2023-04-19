@@ -1,6 +1,6 @@
 <script>
     import Sortable from "sortablejs";
-    import { onMount, createEventDispatcher } from "svelte";
+    import { createEventDispatcher } from "svelte";
     import { slide } from "svelte/transition";
 
     import {
@@ -11,35 +11,19 @@
 
     const dispatch = createEventDispatcher();
 
-    onMount(async () => {
-        setUpSortable();
-    });
-
     export let projectData;
 
-    let initOpenEl = false;
-    let initCloseEl = false;
     let projectContentElOpen;
     let projectContentElClose;
     const acceptPut = ["inbox", "incubator", "incubatorProject"];
     let isHover = false;
 
-    $: !projectContentElOpen || setUpSortable("open");
-    $: !projectContentElClose || setUpSortable("close");
-    function setUpSortable(setupElement) {
-        let projectContentEl;
+    $: !projectContentElOpen || setUpSortableOpen();
+    // $: !projectContentElClose || setUpSortableClose();
+    function setUpSortableOpen() {
+        if (!projectContentElOpen) return;
 
-        if (setupElement == "open") {
-            if (initOpenEl || !projectContentElOpen) {
-                return;
-            }
-            projectContentEl = projectContentElOpen;
-            // initOpenEl = true;
-        }
-
-        if (!projectContentEl) return;
-
-        Sortable.create(projectContentEl, {
+        Sortable.create(projectContentElOpen, {
             group: {
                 name: "incubatorProject",
                 put: acceptPut,
@@ -57,7 +41,7 @@
             onStart: (e) => {
                 draggingType.update((t) => "task");
                 draggingData.update((d) => projectData.content[e.oldIndex]);
-                draggingParentEl.update((p) => projectContentEl);
+                draggingParentEl.update((p) => projectContentElOpen);
             },
             onEnd: (e) => {
                 isHover = false;
@@ -119,7 +103,7 @@
             },
         });
 
-        projectContentEl.addEventListener("removeItem", (e) => {
+        projectContentElOpen.addEventListener("removeItem", (e) => {
             removeItem(e.detail);
         });
     }
