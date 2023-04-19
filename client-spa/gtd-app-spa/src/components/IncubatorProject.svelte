@@ -1,9 +1,13 @@
 <script>
-    import Sortable from 'sortablejs';
+    import Sortable from "sortablejs";
     import { onMount, createEventDispatcher } from "svelte";
-    import { slide } from 'svelte/transition';
+    import { slide } from "svelte/transition";
 
-    import { draggingType, draggingData, draggingParentEl } from '../stores/dragging';
+    import {
+        draggingType,
+        draggingData,
+        draggingParentEl,
+    } from "../stores/dragging";
 
     const dispatch = createEventDispatcher();
 
@@ -17,10 +21,13 @@
     const acceptPut = ["inbox", "incubator", "incubatorProject"];
     let isHover = false;
 
+    $: !projectContentEl || setUpSortable();
     function setUpSortable() {
+        if (!projectContentEl) return;
+
         Sortable.create(projectContentEl, {
             group: {
-                name: 'incubatorProject',
+                name: "incubatorProject",
                 put: acceptPut,
                 // pull: false
             },
@@ -34,38 +41,54 @@
             // forceFallback: true,
             onSort: (e) => handleContainerChange(e),
             onStart: (e) => {
-                draggingType.update( (t) => "task" );
-                draggingData.update( (d) => projectData.content[e.oldIndex] );
-                draggingParentEl.update( (p) => projectContentEl );
+                draggingType.update((t) => "task");
+                draggingData.update((d) => projectData.content[e.oldIndex]);
+                draggingParentEl.update((p) => projectContentEl);
             },
             onEnd: (e) => {
                 isHover = false;
-                draggingType.update( (t) => "" );
-                draggingData.update( (d) => "" );
-                draggingParentEl.update( (p) => undefined );
+                draggingType.update((t) => "");
+                draggingData.update((d) => "");
+                draggingParentEl.update((p) => undefined);
             },
-            onDragIn:  (e) => { isHover = true },
-            onDragOut: (e) => { isHover = false },
-            onDrop: (e) => { isHover = false },
+            onDragIn: (e) => {
+                isHover = true;
+            },
+            onDragOut: (e) => {
+                isHover = false;
+            },
+            onDrop: (e) => {
+                isHover = false;
+            },
             onAdd: (e) => {
                 const wasHover = isHover;
                 isHover = false;
 
-                if ( idExist($draggingData.id, projectData.content) ) return;
+                if (idExist($draggingData.id, projectData.content)) return;
 
-                if ( $draggingData.type == 'project' ) return;
+                if ($draggingData.type == "project") return;
 
-                if ( acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "task" && wasHover ) {
+                if (
+                    acceptPut.includes(e.fromSortable.options.group.name) &&
+                    $draggingType == "task" &&
+                    wasHover
+                ) {
                     projectData.content.splice(e.newIndex, 0, $draggingData);
-                    $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
+                    $draggingParentEl.dispatchEvent(
+                        new CustomEvent("removeItem", { detail: e.oldIndex })
+                    );
                     updateAndTell();
                 }
 
-                if ( wasHover && acceptPut.includes(e.fromSortable.options.group.name) &&  $draggingType == "idea" ) {
-                    dispatch('inbox-to-project', {
+                if (
+                    wasHover &&
+                    acceptPut.includes(e.fromSortable.options.group.name) &&
+                    $draggingType == "idea"
+                ) {
+                    dispatch("inbox-to-project", {
                         incubator: "...",
                         project: projectData.id,
-                        idea: $draggingData
+                        idea: $draggingData,
                     });
                     /* $draggingParentEl.dispatchEvent( new CustomEvent('removeItem', { detail: e.oldIndex }) );
                     addItem(e, {
@@ -79,16 +102,16 @@
                         after: "Task"
                     } ); */
                 }
-            }
+            },
         });
 
-        projectContentEl.addEventListener('removeItem', (e) => {
+        projectContentEl.addEventListener("removeItem", (e) => {
             removeItem(e.detail);
-        })
-    };
+        });
+    }
 
     function handleContainerChange(ev) {
-        const oldLi = projectData.content[ev.oldIndex];		
+        const oldLi = projectData.content[ev.oldIndex];
         projectData.content.splice(ev.oldIndex, 1);
         projectData.content.splice(ev.newIndex, 0, oldLi);
         updateAndTell();
@@ -105,40 +128,49 @@
     }
 
     function idExist(id, list) {
-		for (let i = 0; i < list.length; i++) {
-			if (list[i].id == id) {
-				alert("Item already in list!");
-				return true;
-			}
-		}
-		return false;
-	}
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id == id) {
+                alert("Item already in list!");
+                return true;
+            }
+        }
+        return false;
+    }
 
     function updateAndTell() {
         projectData.content = projectData.content;
-        dispatch('update');
+        dispatch("update");
     }
-
 </script>
 
-
-
 <div class="idea">
-    <b on:click={ () => {projectData._isOpen = !projectData._isOpen} }>{projectData.name}</b>
-    <div bind:this={projectContentEl} transition:slide={{duration: 200}}  class="container" class:closed={!projectData._isOpen} class:drop-here={$draggingType == "task"} class:is-hover={isHover}>
-        {#each projectData.content as projectTask (projectTask.id)}
-        <div class="idea">{projectTask.text}</div>
-        {/each}
-    </div>
+    <b
+        on:click={() => {
+            projectData._isOpen = !projectData._isOpen;
+        }}>{projectData.name}</b
+    >
+    {#if projectData._isOpen}
+        <div transition:slide|local={{ duration: 200 }}>
+            <div
+                bind:this={projectContentEl}
+                class="container"
+                class:closed={!projectData._isOpen}
+                class:drop-here={$draggingType == "task"}
+                class:is-hover={isHover}
+            >
+                {#each projectData.content as projectTask (projectTask.id)}
+                    <div class="idea">{projectTask.text}</div>
+                {/each}
+            </div>
+        </div>
+    {/if}
 </div>
-
-
 
 <style>
     /* .container { */
-        /* padding: 0.5em; */
-        /* transition: height 0.2s; */
-        /* min-height: 1em; */
+    /* padding: 0.5em; */
+    /* transition: height 0.2s; */
+    /* min-height: 1em; */
     /* } */
 
     .idea {
